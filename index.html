@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Gradiente Descendiente</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        label, input {
+            display: block;
+            margin-bottom: 10px;
+        }
+        .result {
+            margin-top: 20px;
+        }
+        ul {
+            list-style: none;
+            padding-left: 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Calculadora de Gradiente Descendiente</h1>
+    <label for="alfa">Tasa de Aprendizaje (Alfa):</label>
+    <input type="number" id="alfa" step="0.01" placeholder="Ej. 0.1">
+
+    <label for="derivadaCuadratica">Derivada del Término Cuadrático:</label>
+    <input type="number" id="derivadaCuadratica" step="0.01" placeholder="Ej. 2">
+
+    <label for="derivadaLineal">Derivada del Término Lineal:</label>
+    <input type="number" id="derivadaLineal" step="0.01" placeholder="Ej. 1">
+
+    <button onclick="calcularGradienteDescendente()">Calcular</button>
+
+    <div class="result" id="resultado"></div>
+    <div class="result" id="interacciones">
+        <h3>Interacciones:</h3>
+        <ul id="listaInteracciones"></ul>
+    </div>
+
+    <script>
+        function calcularGradienteDescendente() {
+            const alfa = parseFloat(document.getElementById("alfa").value);
+            const derivadaCuadratica = parseFloat(document.getElementById("derivadaCuadratica").value);
+            const derivadaLineal = parseFloat(document.getElementById("derivadaLineal").value);
+
+            if (isNaN(alfa) || isNaN(derivadaCuadratica) || isNaN(derivadaLineal)) {
+                alert("Por favor, introduce todos los valores correctamente.");
+                return;
+            }
+
+            // Variables iniciales
+            let x = 0; // Suponemos que comenzamos en x = 0
+            let cambio = 1;
+            let iteracion = 0;
+            const tolerancia = 0.0001;
+            let listaInteracciones = document.getElementById("listaInteracciones");
+            listaInteracciones.innerHTML = ""; // Limpiar interacciones anteriores
+
+            // Iterar hasta que el cambio sea menor que la tolerancia
+            while (Math.abs(cambio) > tolerancia) {
+                iteracion++;
+
+                // Calculamos la derivada total de la función objetivo: 
+                // 2 * derivadaCuadratica * x + derivadaLineal
+                const gradiente = 2 * derivadaCuadratica * x + derivadaLineal;
+
+                // Actualizamos x utilizando el gradiente descendente
+                const nuevoX = x - alfa * gradiente;
+
+                // Calculamos el cambio
+                cambio = nuevoX - x;
+
+                // Añadimos la iteración a la lista de interacciones
+                const item = document.createElement("li");
+                item.textContent = `Iteración ${iteracion}: x = ${nuevoX.toFixed(4)}`;
+                listaInteracciones.appendChild(item);
+
+                // Actualizamos x
+                x = nuevoX;
+            }
+
+            // Mostrar el resultado final
+            document.getElementById("resultado").innerHTML = `
+                <p>La función converge después de ${iteracion} iteraciones.</p>
+                <p>Valor final de x: ${x.toFixed(4)}</p>
+            `;
+        }
+    </script>
+</body>
+</html>
